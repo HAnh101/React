@@ -2,20 +2,33 @@ import React from 'react';
 import './App.css';
 import PropTypes from 'prop-types';
 
+class Person extends React.Component {
+  render() {
+    return (
+      <div className='param'>
+        <h1>
+          Name: {this.props.name}. Age: {this.props.age}
+        </h1>
+        <p>Submit my homework!</p>
+      </div>
+    );
+  }
+}
+
 class App extends React.Component {
   render() {
     return (
-      <h1>Hello {this.props.name}</h1>
+      <div className='App'>
+        <Person name='HAnh' age={21} />
+        <Person name={1} age={21} />
+      </div>
     );
   }
 }
   
-App.propTypes = {
-  name: PropTypes.string
+Person.propTypes = {
+  name: PropTypes.string,
+  age: PropTypes.number,
 };
 
-App.defaultProps = {
-  name: 'World'
-};
-  
 export default App;
