@@ -2,14 +2,18 @@ import React from 'react';
 import './App.css';
 import PropTypes from 'prop-types';
 
-class Person extends React.Component {
+class Book extends React.Component {
   render() {
     return (
       <div className='param'>
         <h1>
-          Name: {this.props.name}. Age: {this.props.age}
+          Id: {this.props.id}
         </h1>
-        <p>Submit my homework!</p>
+        <p>
+          Book title: {this.props.name} <br />
+          Author: {this.props.author} <br />
+          Type of books: {this.props.types} <br />
+        </p>
       </div>
     );
   }
@@ -19,16 +23,19 @@ class App extends React.Component {
   render() {
     return (
       <div className='App'>
-        <Person name='HAnh' age={21} />
-        <Person name={1} age={21} />
+        <Book id={1} name='The Da Vinci Code' author='Dan Brown' types='Mystery'/>
+        <Book id={2} name='Jaws' author='Peter Benchley' types='Horror'/>
+        <Book name={1} author='Peter Flynn' types='Horror'/>
       </div>
     );
   }
 }
   
-Person.propTypes = {
+Book.propTypes = {
+  id: PropTypes.number.isRequired,
   name: PropTypes.string,
-  age: PropTypes.number,
+  author: PropTypes.string,
+  types: PropTypes.oneOf(['Crime', 'Horror', 'Mystery'])
 };
 
 export default App;
