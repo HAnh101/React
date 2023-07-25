@@ -1,49 +1,97 @@
 import React from 'react';
 import './App.css';
-import className from 'classnames'
+import classNames from 'classnames';
 
-const RED = 1
-const YELLOW = 2
-const GREEN = 3
+class TodoItem extends React.Component {
+  render() {
+    const { item } = this.props
+    
+    return (
+      <div
+      onClick={() => this.props.onItemClick(item)}
+        className={classNames('todo-items', {
+          'done': item.isDone
+        })}
+        >
+        {item.title}
+      </div>
+    )
+  }
+}
 
 class App extends React.Component {
   constructor() {
     super()
-    
     this.state = {
-      currentColor: RED
+      'name': 'a',
+      count: 12,
+      todoItems: [
+        {
+          id: 1,
+          title: 'Cafe',
+          isDone: true,
+        },
+        {
+          id: 2,
+          title: 'Movie',
+          isDone: false,
+        },
+        {
+          id: 3,
+          title: '???',
+          isDone: false,
+        },
+      ]
     }
+  }
+  
+  onItemClick(item) {
+    const _todoItemIndex = this.state.todoItems.findIndex(_item => _item.id === item.id)
+    const _todoItems = this.state.todoItems
+    _todoItems[_todoItemIndex].isDone = !_todoItems[_todoItemIndex].isDone
 
-    setInterval(() => {
-      this.setState(
-        { currentColor: this.getNextColor() }
-      ) 
-    }, 1000)
+    this.setState({
+      ...this.state,
+      todoItems: _todoItems
+    })
   }
 
-  randomIntFromInterval(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min)
+  onInputChange(event) {
+    this.setState({ newTodoItem: event.target.value })
   }
 
-  getNextColor() {
-    return this.randomIntFromInterval(1,3)
+  onAddNewTodoItem(event) {
+    if (event.keyCode === 13) {
+      this.setState({
+        todoItems: [
+          {
+            id: this.state.todoItems.length + 1,
+            title: this.state.newTodoItem,
+            isDone: false,
+          },
+          ...this.state.todoItems
+        ],
+        newTodoItem: ""
+      })
+      console.log(this.state.newTodoItem);
+    }
   }
 
   render() {
-    const { currentColor } = this.state
-    console.log('this.currentColor', currentColor);
-
     return (
       <div className="App">
-        <div className={className('bubble red', {
-          'active': currentColor === RED
-        })}></div>
-        <div className={className('bubble yellow', {
-          'active': currentColor === YELLOW
-        })}></div>
-        <div className={className('bubble green', {
-          'active': currentColor === GREEN
-        })}></div>
+        <input
+          onChange={(event) => this.onInputChange(event)}
+          value={this.state.newTodoItem} 
+          onKeyUp={(event) => this.onAddNewTodoItem(event)}
+        />
+        {
+          this.state.todoItems.map((_item, index) => {
+            return (
+              <TodoItem onItemClick={(item) => this.onItemClick(item)} item={_item} key={index} />
+            )
+          })
+        }
       </div>
     );
   }
