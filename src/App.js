@@ -1,36 +1,21 @@
 import React from 'react';
 import './App.css';
-
-class Accordion extends React.Component {
-  render() {
-    const { heading, children } = this.props
-    
-    return (
-      <div className='accordion'>
-        <h1>{heading}</h1>
-
-        <div className='content'>
-          {children}
-        </div>
-      </div>
-    )
-  }
-}
+import PropTypes from 'prop-types';
 
 class App extends React.Component {
   render() {
     return (
-      <div className='App'>
-        <Accordion 
-          heading="This is heading"
-        >
-          <div>
-            "This is content"
-          </div>
-        </Accordion>
-      </div>
-    )
+      <h1>Hello {this.props.name}</h1>
+    );
   }
 }
+  
+App.propTypes = {
+  name: PropTypes.string
+};
 
+App.defaultProps = {
+  name: 'World'
+};
+  
 export default App;
