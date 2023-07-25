@@ -1,52 +1,41 @@
-import React from 'react';
 import './App.css';
-import className from 'classnames'
+import TodoItem from './components/TodoItem'
 
-const RED = 1
-const YELLOW = 2
-const GREEN = 3
-
-class App extends React.Component {
-  constructor() {
-    super()
-    
-    this.state = {
-      currentColor: RED
-    }
-
-    setInterval(() => {
-      this.setState(
-        { currentColor: this.getNextColor() }
-      ) 
-    }, 1000)
-  }
-
-  randomIntFromInterval(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) + min)
-  }
-
-  getNextColor() {
-    return this.randomIntFromInterval(1,3)
-  }
-
-  render() {
-    const { currentColor } = this.state
-    console.log('this.currentColor', currentColor);
-
-    return (
-      <div className="App">
-        <div className={className('bubble red', {
-          'active': currentColor === RED
-        })}></div>
-        <div className={className('bubble yellow', {
-          'active': currentColor === YELLOW
-        })}></div>
-        <div className={className('bubble green', {
-          'active': currentColor === GREEN
-        })}></div>
-      </div>
-    );
-  }
+function App() {
+  const data = [
+    {
+      id: 1,
+      title: 'Cafe',
+      isDone: true,
+      isDeleted: true,
+    },
+    {
+      id: 2,
+      title: 'Movie',
+      isDone: true,
+    },
+    {
+      id: 3,
+      title: 'Homeworks',
+      isDone: false,
+    },
+    {
+      id: 4,
+      title: 'Houseworks',
+      isDone: false,
+    },
+  ]
+  return (
+    <div className="App">
+      {
+        data.map((_data, index) => {
+          return (
+            <TodoItem key={index} data={_data}/>            
+          )
+        })
+      }
+    </div>
+  );
 }
 
 export default App;
