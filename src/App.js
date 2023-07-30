@@ -1,41 +1,98 @@
 import React from 'react';
 import './App.css';
-import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
-class Book extends React.Component {
+class TodoItem extends React.Component {
   render() {
+    const { item } = this.props
+    
     return (
-      <div className='param'>
-        <h1>
-          Id: {this.props.id}
-        </h1>
-        <p>
-          Book title: {this.props.name} <br />
-          Author: {this.props.author} <br />
-          Type of books: {this.props.types} <br />
-        </p>
+      <div
+      onClick={() => this.props.onItemClick(item)}
+        className={classNames('todo-items', {
+          'done': item.isDone
+        })}
+        >
+        {item.title}
       </div>
-    );
+    )
   }
 }
 
 class App extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      'name': 'a',
+      count: 12,
+      todoItems: [
+        {
+          id: 1,
+          title: 'Cafe',
+          isDone: true,
+        },
+        {
+          id: 2,
+          title: 'Movie',
+          isDone: false,
+        },
+        {
+          id: 3,
+          title: '???',
+          isDone: false,
+        },
+      ]
+    }
+
+    this.inputRef = React.createRef()
+  }
+  
+  onItemClick(item) {
+    const _todoItemIndex = this.state.todoItems.findIndex(_item => _item.id === item.id)
+    const _todoItems = this.state.todoItems
+    _todoItems[_todoItemIndex].isDone = !_todoItems[_todoItemIndex].isDone
+
+    this.setState({
+      ...this.state,
+      todoItems: _todoItems
+    })
+  }
+
+  onAddNewTodoItem(event) {
+    if (event.keyCode === 13) {
+      this.setState({
+        todoItems: [
+          {
+            id: this.state.todoItems.length + 1,
+            title: this.inputRef.current.value,
+            isDone: false,
+          },
+          ...this.state.todoItems
+        ],
+      }, 
+      () => {
+        this.inputRef.current.value = ''
+      })
+    }
+  }
+
   render() {
     return (
-      <div className='App'>
-        <Book id={1} name='The Da Vinci Code' author='Dan Brown' types='Mystery'/>
-        <Book id={2} name='Jaws' author='Peter Benchley' types='Horror'/>
-        <Book name={1} author='Peter Flynn' types='Horror'/>
+      <div className="App">
+        <input
+          ref={this.inputRef}
+          onKeyUp={(event) => this.onAddNewTodoItem(event)}
+        />
+        {
+          this.state.todoItems.map((_item, index) => {
+            return (
+              <TodoItem onItemClick={(item) => this.onItemClick(item)} item={_item} key={index} />
+            )
+          })
+        }
       </div>
     );
   }
 }
-  
-Book.propTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string,
-  author: PropTypes.string,
-  types: PropTypes.oneOf(['Crime', 'Horror', 'Mystery'])
-};
 
 export default App;
