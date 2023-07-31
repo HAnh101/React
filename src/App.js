@@ -1,88 +1,83 @@
-import { useState } from 'react';
-import React from 'react';
-import './App.css';
-import classNames from 'classnames';
+import { useState, useEffect } from 'react';
 
-class TodoItem extends React.Component {
-  render() {
-    const { item } = this.props
-    
-    return (
-      <div
-      onClick={() => this.props.onItemClick(item)}
-        className={classNames('todo-items', {
-          'done': item.isDone
-        })}
-        >
-        {item.title}
-      </div>
-    )
-  }
+let nextId = 0;
+
+function createTodo(text, completed = false) {
+  return {
+    id: nextId++,
+    text,
+    completed
+  };
 }
 
+const initialTodos = [
+  createTodo('Cafe', true),
+  createTodo('Movie', true),
+  createTodo('Camping'),
+];
+
 function App() {
-  const [newTodoItem, setNewTodoItem] = useState('')
-  const [todoItems, setTodoItems] = useState([
-    {
-      id: 1,
-      title: 'Cafe',
-      isDone: true,
-    },
-    {
-      id: 2,
-      title: 'Movie',
-      isDone: false,
-    },
-    {
-      id: 3,
-      title: '???',
-      isDone: false,
-    },
-  ])
-  
-  const onItemClick = (item) => {
-    const _todoItemIndex = todoItems.findIndex(_item => _item.id === item.id)
-    const _todoItems = todoItems
-    _todoItems[_todoItemIndex].isDone = !_todoItems[_todoItemIndex].isDone
+  const [todos, setTodos] = useState(initialTodos);
+  const [showActive, setShowActive] = useState(false);
+  const [activeTodos, setActiveTodos] = useState([]);
+  const [visibleTodos, setVisibleTodos] = useState([]);
+  const [footer, setFooter] = useState(null);
 
-    setTodoItems(_todoItems)
-  }
+  useEffect(() => {
+    setActiveTodos(todos.filter(todo => !todo.completed));
+  }, [todos]);
 
-  const onInputChange = (event) => {
-    setNewTodoItem(event.target.value)
-  }
+  useEffect(() => {
+    setVisibleTodos(showActive ? activeTodos : todos);
+  }, [showActive, todos, activeTodos]);
 
-  const onAddNewTodoItem = (event) => {
-    if (event.keyCode === 13) {
-      setTodoItems((prev) => ([
-          {
-            id: prev.length + 1,
-            title: newTodoItem,
-            isDone: false,
-          },
-          ...prev
-        ]))
-      setNewTodoItem("")
-    }
+  useEffect(() => {
+    setFooter(
+      <footer>
+        {activeTodos.length} todos left
+      </footer>
+    );
+  }, [activeTodos]);
+
+  return (
+    <>
+      <label>
+        <input
+          type="checkbox"
+          checked={showActive}
+          onChange={e => setShowActive(e.target.checked)}
+        />
+        Show only active todos
+      </label>
+      <NewTodo onAdd={newTodo => setTodos([...todos, newTodo])} />
+      <ul>
+        {visibleTodos.map(todo => (
+          <li key={todo.id}>
+            {todo.completed ? <s>{todo.text}</s> : todo.text}
+          </li>
+        ))}
+      </ul>
+      {footer}
+    </>
+  );
+}
+
+function NewTodo({ onAdd }) {
+  const [text, setText] = useState('');
+
+  function handleAddClick() {
+    setText('');
+    onAdd(createTodo(text));
   }
 
   return (
-    <div className="App">
-      <input
-        onChange={(event) => onInputChange(event)}
-        value={newTodoItem} 
-        onKeyUp={(event) => onAddNewTodoItem(event)}
-      />
-      {
-        todoItems.map((_item, index) => {
-          return (
-            <TodoItem onItemClick={(item) => onItemClick(item)} item={_item} key={index} />
-          )
-        })
-      }
-    </div>
+    <>
+      <input value={text} onChange={e => setText(e.target.value)} />
+      <button onClick={handleAddClick}>
+        Add
+      </button>
+    </>
   );
-  
 }
 
 export default App;
